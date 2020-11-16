@@ -14,22 +14,18 @@ FROM alpine:3.12
 
 MAINTAINER Apolo Yasuda "apolo.yasuda@ge.com"
 
-USER root
-WORKDIR /root
-
-#arg is rewritten by docker build
-ARG EC_REV_V1BETA=v1beta.fukuoka.1725
+ARG EC_REV_V1BETA=v1beta.fukuoka.1727
 
 ENV ENV="/etc/profile"
 
-RUN apk update && apk add --no-cache wget && apk add --no-cache bash 
+RUN apk update && apk add --no-cache wget && apk add --no-cache bash
 
 RUN echo 'export PATH=$PATH:$HOME/.ec' >> /etc/profile
 
-RUN ["/bin/bash", "-c", "source <(wget -O - https://ec-release.github.io/sdk/scripts/agt/v1beta.linux64_pkg.txt) -ver"]
+RUN ["/bin/bash", "-c", "wget -q --show-progress -O ~/v1.2beta.linux64.sh https://ec-release.github.io/sdk/scripts/agt/v1beta.linux64.txt"]
 
-RUN chmod 755 ~/.ec/conf/agent.sh
+RUN chmod +x ~/v1.2beta.linux64.sh
 
-RUN ln -s ~/.ec/agent /bin/agent
+ENTRYPOINT ["./v1.2beta.linux64.sh"]
 
-CMD ["./.ec/conf/agent.sh"]
+CMD ["-inf"]
