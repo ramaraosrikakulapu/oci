@@ -17,9 +17,17 @@ MAINTAINER Apolo Yasuda "apolo.yasuda@ge.com"
 USER root
 WORKDIR /root
 
-RUN ["/bin/bash","-c","source <(wget -O - https://ec-release.github.io/sdk/scripts/plg/tls/v1beta.linux64.txt) -ver"]
-RUN ["/bin/bash","-c","source <(wget -O - https://ec-release.github.io/sdk/scripts/plg/vln/v1beta.linux64.txt) -ver"]
+ARG EC_REV_V1BETA=v1.fukuoka.1727
 
-RUN ls -al && ls -al ~/.ec && chmod 755 ~/.ec/conf/agent.sh
+ENV ENV="/etc/profile"
 
-CMD ["./.ec/conf/agent.sh"]
+RUN apk update && apk add --no-cache wget && apk add --no-cache bash
+
+RUN echo 'export PATH=$PATH:$HOME/.ec' >> /etc/profile
+
+RUN ["/bin/bash", "-c", "wget -q --show-progress -O ~/v1beta.linux64.sh https://ec-release.github.io/sdk/scripts/plg/v1beta.linux64.txt"]
+
+RUN chmod +x ~/v1beta.linux64.sh
+
+CMD ["./v1beta.linux64.sh"]
+
