@@ -22,10 +22,10 @@ RUN apk update && apk add --no-cache wget && apk add --no-cache bash
 
 RUN echo 'export PATH=$PATH:$HOME/.ec' >> /etc/profile
 
-RUN ["/bin/bash", "-c", "wget -q --show-progress -O ~/v1.2beta.linux64.sh https://ec-release.github.io/sdk/scripts/agt/v1beta.linux64.txt"]
+RUN ["/bin/bash", "-c", "wget -q --show-progress -O ~/v1beta.linux64.sh https://ec-release.github.io/sdk/scripts/agt/v1beta.linux64.txt"]
 
-RUN chmod +x ~/v1.2beta.linux64.sh
+RUN chmod +x ~/v1beta.linux64.sh
 
-ENTRYPOINT ["./v1.2beta.linux64.sh"]
+ENTRYPOINT ["./v1beta.linux64.sh"]
 
 CMD ["-inf"]
