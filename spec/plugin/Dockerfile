@@ -21,13 +21,8 @@ ARG EC_REV_V1BETA=v1.fukuoka.1727
 
 ENV ENV="/etc/profile"
 
-RUN apk update && apk add --no-cache wget && apk add --no-cache bash
-
-RUN echo 'export PATH=$PATH:$HOME/.ec' >> /etc/profile
-
 RUN ["/bin/bash", "-c", "wget -q --show-progress -O ~/v1beta.linux64.sh https://ec-release.github.io/sdk/scripts/plg/v1beta.linux64.txt"]
 
 RUN chmod +x ~/v1beta.linux64.sh
 
 CMD ["./v1beta.linux64.sh"]
-
