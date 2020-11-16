@@ -14,15 +14,10 @@ FROM enterpriseconnect/agent:v1beta
 
 MAINTAINER Apolo Yasuda "apolo.yasuda@ge.com"
 
-USER root
-WORKDIR /root
-
-ARG EC_REV_V1BETA=v1.fukuoka.1727
-
-ENV ENV="/etc/profile"
+ARG EC_REV_V1BETA=v1beta.fukuoka.1727
 
 RUN ["/bin/bash", "-c", "wget -q --show-progress -O ~/v1beta.linux64.sh https://ec-release.github.io/sdk/scripts/plg/v1beta.linux64.txt"]
 
 RUN chmod +x ~/v1beta.linux64.sh
 
-CMD ["./v1beta.linux64.sh"]
+ENTRYPOINT ["./v1beta.linux64.sh"]
