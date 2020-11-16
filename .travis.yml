@@ -18,7 +18,8 @@ deploy:
       echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin &&
       docker push enterpriseconnect/agent:v1beta && 
       docker push enterpriseconnect/plugins:v1beta
-      #docker push enterpriseconnect/build:v1beta
+    
+    #docker push enterpriseconnect/build:v1beta
     on:
       branch: v1beta_oci_spec
 
