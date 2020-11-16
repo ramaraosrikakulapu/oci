@@ -14,6 +14,9 @@ FROM alpine:3.12
 
 MAINTAINER Apolo Yasuda "apolo.yasuda@ge.com"
 
+USER root
+WORKDIR /root
+
 ARG EC_REV_V1BETA=v1beta.fukuoka.1727
 
 ENV ENV="/etc/profile"
