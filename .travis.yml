@@ -12,6 +12,7 @@ env:
     - GITHUB_AGENT_TAG="docker.pkg.github.com/ec-release/oci/agent:v1beta"
     - GITHUB_PLUGIN_TAG="docker.pkg.github.com/ec-release/oci/plugins:v1beta"
     - GITHUB_BUILD_TAG="docker.pkg.github.com/ec-release/oci/build:v1beta"
+    - GITHUB_REGISTRY="https://docker.pkg.github.com"
     - GITHUB_USR="ayasuda-ge"
     
 before_install:
@@ -26,13 +27,13 @@ deploy:
     skip_cleanup: true
     script: >-
       echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin &&
-      docker push enterpriseconnect/agent:v1beta && 
-      docker push enterpriseconnect/plugins:v1beta &&
-      docker push enterpriseconnect/build:v1beta &&
+      docker push $DOCKER_HUB_AGENT_TAG && 
+      docker push $DOCKER_HUB_PLUGIN_TAG &&
+      docker push $DOCKER_HUB_BUILD_TAG &&
       docker tag $DOCKER_HUB_AGENT_TAG $GITHUB_AGENT_TAG &&
       docker tag $DOCKER_HUB_PLUGIN_TAG $GITHUB_PLUGIN_TAG &&
       docker tag $DOCKER_HUB_BUILD_TAG $GITHUB_BUILD_TAG &&
-      echo $GITHUB_DOCKER_TKN_V1BETA | docker login https://docker.pkg.github.com -u $GITHUB_USR --password-stdin &&
+      echo $GITHUB_DOCKER_TKN_V1BETA | docker login $GITHUB_REGISTRY -u $GITHUB_USR --password-stdin &&
       docker push $GITHUB_AGENT_TAG &&
       docker push $GITHUB_PLUGIN_TAG &&
       docker push $GITHUB_BUILD_TAG
@@ -40,9 +41,9 @@ deploy:
       branch: v1beta_oci_spec
 
 after_deploy: >-
-  docker run -it enterpriseconnect/agent:v1beta -ver && docker rmi enterpriseconnect/agent:v1beta -f && 
-  docker run -it enterpriseconnect/plugins:v1beta -inf && docker rmi enterpriseconnect/plugins:v1beta -f &&
-  docker rmi enterpriseconnect/build:v1beta -f && docker run -it enterpriseconnect/build:v1beta go version
+  docker run -it $DOCKER_HUB_AGENT_TAG -ver && docker rmi $DOCKER_HUB_AGENT_TAG -f && 
+  docker run -it $DOCKER_HUB_PLUGIN_TAG -inf && docker rmi $DOCKER_HUB_PLUGIN_TAG -f &&
+  docker rmi $DOCKER_HUB_BUILD_TAG -f && docker run -it $DOCKER_HUB_BUILD_TAG go version
 notifications:  
   email:  
     recipients:  
