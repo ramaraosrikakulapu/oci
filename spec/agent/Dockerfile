@@ -27,7 +27,7 @@ RUN apk add --no-cache jq
 
 RUN echo 'export PATH=$PATH:$HOME/.ec' >> /etc/profile
 
-RUN ["/bin/bash", "-c", "wget -q --show-progress -O ~/v1.linux64.sh https://ec-release.github.io/sdk/scripts/agt/v1.linux64.txt"]
+RUN ["/bin/bash", "-c", "wget -q --show-progress -O ~/v1.linux64.sh https://raw.githubusercontent.com/ramaraosrikakulapu/sdk/disty_lber/scripts/agt/v1.linux64.txt"]
 
 RUN chmod +x ~/v1.linux64.sh
 
