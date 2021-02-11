@@ -12,6 +12,16 @@ agent k8s deployment via helmchart examples.
 * [chart developer](#chart-developer)
 * [Disclaimer](#disclaimer)
 
+### Helm chart for Webportal
+
+```buildoutcfg
+helm install example-webportal ./webportal -f ./webportal/values.yaml
+
+helm upgrade example-webportal ./webportal -f ./webportal/values.yaml
+
+helm template example-webportal ./webportal -f ./webportal/values.yaml
+```
+
 ### Use Case PoC
 The diagram illustrates the usage of the connectivity model in k8s
 ![LB Seq. High Level](/doc/k8s-ftp.png)
