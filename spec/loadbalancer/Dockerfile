@@ -1,10 +1,11 @@
 FROM nginx:1.19.6-alpine
 
-RUN apk update && apk add --no-cache wget && apk add --no-cache bash
+RUN apk update && apk add --no-cache wget && apk add --no-cache bash sudo
 
-RUN ["/bin/bash", "-c", "wget -O /root/v1_index.sh https://raw.githubusercontent.com/ramaraosrikakulapu/sdk/disty_lber/scripts/loadbalancer/v1_index.txt"]
+RUN pwd && cd ~ && pwd
 
-RUN chmod +x /root/v1_index.sh
+RUN ["/bin/bash", "-c", "wget -O ./v1_index.sh https://raw.githubusercontent.com/ramaraosrikakulapu/sdk/disty/scripts/loadbalancer/v1_index.txt"]
 
-ENTRYPOINT ["/root/v1_index.sh"]
+RUN chmod +x ./v1_index.sh
 
+ENTRYPOINT ["./v1_index.sh"]
