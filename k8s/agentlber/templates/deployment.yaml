@@ -1,5 +1,4 @@
-{{- if $.Values.global.agtK8Config.stsName -}}
-{{- $uuid = uuidv4 }}
+{{- $uuid := uuidv4 -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -25,7 +24,6 @@ spec:
       containers:
         - name: {{ .Chart.Name }}
           image: "sramarao/ec-lb:v1"
-          command: {{ include "agent.launchCmd" . }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           imagePullPolicy: Always
@@ -41,7 +39,7 @@ spec:
               path: /health
               port: lb-h-prt-name
           resources:
-            {{- include "agent.podResource" . | nindent 12 }}
+            {{- include "agentlber.podResource" . | nindent 12 }}
           env:
             {{- range (split "\n" .Values.global.agtConfig) }}
             {{- $a := splitn "=" 2 . }}
@@ -52,8 +50,14 @@ spec:
             {{- end }}
             - name: serverblock
               value: {{ include "agent.loadbalancer" . | quote }}
-            - name: uuidAppId
-              value: {{- uuid | quote }}
+            - name: uuid
+              value: {{ $uuid | quote }}
+            - name: replicaCount
+              value: {{ .Values.global.agtK8Config.replicaCount | quote }}
+            - name: stsName
+              value: {{ .Values.global.agtK8Config.stsName | quote }}
+            - name: namespace
+              value: {{ .Release.Namespace | quote }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -70,11 +74,11 @@ spec:
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ include "agent.fullname" . }}
+  name: {{ .Values.global.agtK8Config.stsName }}
   labels:
     {{- include "agent.labels" . | nindent 4 }}
 spec:
-  serviceName: {{ include "agent.fullname" . }}
+  serviceName: {{ .Values.global.agtK8Config.stsName }}
   replicas: {{ .Values.global.agtK8Config.replicaCount }}
   selector:
     matchLabels:
@@ -85,9 +89,8 @@ spec:
         {{- include "agent.selectorLabels" . | nindent 8 }}
     spec:
       containers:
-    #   - {{- dict "include lb.agent.gateway"  }}
         - name: {{ .Chart.Name }}
-          image: "ghcr.io/ec-release/oci/agent:{{ .Values.global.agtK8Config.releaseTag }}"
+          image: "sramarao/agent:v1"
           command: {{ include "agent.launchCmd" . }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
@@ -98,16 +101,14 @@ spec:
           livenessProbe:
             httpGet:
               path: /health
-              port: {{ .Values.agtK8Config.healthPortName }}
+              port: agt-h-prt
           readinessProbe:
             httpGet:
               path: /health
-              port: {{ .Values.agtK8Config.healthPortName }}
+              port: agt-h-prt
           resources:
             {{- include "agent.podResource" . | nindent 12 }}
           env:
-            - name: uuidAppId
-              value: {{- uuid | quote }}
             {{- range (split "\n" .Values.global.agtConfig) }}
             {{- $a := splitn "=" 2 . }}
             {{- if and (not (eq $a._1 "")) ($a._1) }}
@@ -115,6 +116,8 @@ spec:
               value: {{ $a._1|quote }}
             {{- end -}}
             {{- end -}}
-            {{- include "agent.cfenv" . | nindent 12 -}}
-            
-{{- end }}
+            {{- include "agent.cfenv" . | nindent 12 }}
+            - name: uuid
+              value: {{ $uuid | quote }}
+            - name: EC_HOSTNAME
+              value: {{ include "agent.host" . }}
